@@ -1,15 +1,17 @@
 /**
  * Collect data from a bicycle wheel revolution sensor and report it.
  */
+/*
+#include <morse.h>
 
 #define PIN_STATUS         13
 #define BLINK_LENGTH       100
 
 // This pin will drop from effectively infinite to 1K Ohm resistance.
-#define PIN_REV_SENSE      2
+#define PIN_REV_SENSE      12
 
 // a momentary switch, pressed to generate the report
-#define PIN_REPORT_SWITCH  3
+#define PIN_REPORT_SWITCH  2
 
 // histogram of revolution intervals, 'too small' and 'too large' clamped to ends
 #define HISTOGRAM_MIN      90
@@ -53,9 +55,9 @@ void setup()
   Serial.println("Setup complete.");
 }
 
-/**
+**
  * Print a Python list of of (interval, count) tuples.
- */
+ *
 void printHistogramData()
 {
   Serial.println("(");
@@ -137,3 +139,4 @@ void loop()
   }
 
 }
+*/
