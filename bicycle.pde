@@ -13,10 +13,19 @@
  *  PIN_BUTTON_B      ''
  */
 
+// Switch which overall task to do:
+// Record data from the wheel revolution sensor; always load the histogram
+//  from EEPROM on startup, and save it to EEPROM iff the tall (report) button is held.
+#define MOBILE
+// Load the histogram from EEPROM and print it using Serial.
+//#define EEPROM_PRINT
+// Clear the histogram saved in EEPROM.
+//#define EEPROM_CLEAR
+
 #define PIN_STATUS             13
 #define PIN_REV_SENSOR         12
-#define PIN_SPEAKER            3
-#define PIN_BUTTON_TALL        2
+#define PIN_SPEAKER            2
+#define PIN_BUTTON_TALL        1
 #define PIN_BUTTON_A           11
 #define PIN_BUTTON_B           10
 
@@ -34,7 +43,12 @@
 #include "MomentaryButton.h"
 
 
+Histogram histogram;
 LEDMorseSender statusSender(PIN_STATUS);
+
+
+#if defined(MOBILE)
+
 SpeakerMorseSender speakerSender(PIN_SPEAKER);
 MomentaryButton revSensor(PIN_REV_SENSOR);
 MomentaryButton reportButton(PIN_BUTTON_TALL);
@@ -47,12 +61,8 @@ MomentaryButton tripMeterButtons[NUM_TRIP_METERS] = {
   MomentaryButton(PIN_BUTTON_B)
 };
 
-Histogram histogram;
-
-
 void setup()
 {
-  Serial.begin(28800);
   statusSender.setup();
   speakerSender.setup();
   
@@ -64,6 +74,8 @@ void setup()
   {
     tripMeterButtons[i].setup();
   }
+  
+  histogram.restore();
   
   statusSender.setMessage(String("e")); // just blink
 }
@@ -101,11 +113,9 @@ void loop()
   }
   else if (reportButton.wasHeld())
   {
-    // NEXT need to:
-    // - read from EEPROM
-    // - write to EEPROM
-    // - dump to serial
-    histogram.print();      
+    digitalWrite(PIN_STATUS, HIGH);
+    histogram.save();
+    digitalWrite(PIN_STATUS, LOW);
   }
 
 
@@ -153,3 +163,33 @@ String formatRevolutions(unsigned int revolutions)
     return String((int)round(meters), DEC) + String(" m");
   }
 }
+
+#elif defined(EEPROM_PRINT)
+
+void setup()
+{
+  Serial.begin(28800);
+  histogram.restore();
+  histogram.print();
+  statusSender.setMessage(String("print"));
+  statusSender.sendBlocking();
+  statusSender.setMessage(String(PROSIGN_SK));
+}
+void loop() {
+  statusSender.sendBlocking();
+}
+
+#elif defined(EEPROM_CLEAR)
+
+void setup()
+{
+  statusSender.setMessage(String("erase 3 2 1"));
+  statusSender.sendBlocking();
+  histogram.save();
+  statusSender.setMessage(String(PROSIGN_SK));
+}
+void loop() {
+  statusSender.sendBlocking();
+}
+
+#endif
