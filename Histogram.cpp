@@ -28,11 +28,12 @@ void Histogram::addNow()
 
 void Histogram::print()
 {
+	Serial.begin(28800);
 	Serial.println("# Key: interval (ms)");
 	Serial.println("# Value: number of revolutions"
 		" taking this interval or greater");
 	char buffer[10];
-	dtostrf(METERS_PER_REVOLUTION, sizeof(buffer), 5, buffer);
+	dtostrf(METERS_PER_REVOLUTION, 0, sizeof(buffer)-3, buffer);
 	Serial.println(String("METERS_PER_REVOLUTION = ") + String(buffer));
 	Serial.println("(");
 	for(int i = 0; i < HISTOGRAM_SIZE; i++)
@@ -46,7 +47,7 @@ void Histogram::print()
 		Serial.println("),");
 	}
 	Serial.println(") ");
-	// TODO the LilyPad resets after histogram.print() is called
+	Serial.end();
 }
 
 void Histogram::restore()

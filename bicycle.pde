@@ -63,8 +63,6 @@ MomentaryButton tripMeterButtons[NUM_TRIP_METERS] = {
 
 void setup()
 {
-  Serial.begin(9600);
-  
   statusSender.setup();
   speakerSender.setup();
   
@@ -83,7 +81,6 @@ void setup()
   statusSender.sendBlocking();
   
   statusSender.setMessage(String("e")); // just blink
-  Serial.println("setup complete");
 }
 
 void loop()
@@ -141,8 +138,6 @@ void loop()
     digitalWrite(PIN_STATUS, HIGH);
     histogram.save();
     digitalWrite(PIN_STATUS, LOW);
-    speakerSender.setMessage(String(PROSIGN_KN));
-    speakerSender.sendBlocking();
   }
   if (tripMeterButtons[1].wasHeld())
   {
