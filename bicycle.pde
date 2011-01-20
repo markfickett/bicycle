@@ -57,97 +57,98 @@ MomentaryButton reportButton(PIN_BUTTON_REPORT);
 unsigned int tripMeters[NUM_TRIP_METERS] = {0, 0};
 const char *tripMeterNames[NUM_TRIP_METERS] = {"e", "i"};
 MomentaryButton tripMeterButtons[NUM_TRIP_METERS] = {
-  MomentaryButton(PIN_BUTTON_A),
-  MomentaryButton(PIN_BUTTON_B)
+	MomentaryButton(PIN_BUTTON_A),
+	MomentaryButton(PIN_BUTTON_B)
 };
 
 void setup()
 {
-  statusSender.setup();
-  speakerSender.setup();
-  
-  revSensor.setup();
-  
-  reportButton.setup();
-  
-  for(int i = 0; i < NUM_TRIP_METERS; i++)
-  {
-    tripMeterButtons[i].setup();
-  }
-  
-  histogram.restore();
+	statusSender.setup();
+	speakerSender.setup();
 
-  statusSender.setMessage(String("k"));
-  statusSender.sendBlocking();
-  
-  statusSender.setMessage(String("e")); // just blink
+	revSensor.setup();
+
+	reportButton.setup();
+
+	for(int i = 0; i < NUM_TRIP_METERS; i++)
+	{
+		tripMeterButtons[i].setup();
+	}
+
+	histogram.restore();
+
+	statusSender.setMessage(String("k"));
+	statusSender.sendBlocking();
+
+	statusSender.setMessage(String("e")); // just blink
 }
 
 void loop()
 {
-  revSensor.check();
-  reportButton.check();
-  for(int i = 0; i < NUM_TRIP_METERS; i++)
-  {
-    tripMeterButtons[i].check();
-  }
+	revSensor.check();
+	reportButton.check();
+	for(int i = 0; i < NUM_TRIP_METERS; i++)
+	{
+		tripMeterButtons[i].check();
+	}
   
-  if (revSensor.wasClicked() || revSensor.wasHeld())
-  {
-    for(int i = 0; i < NUM_TRIP_METERS; i++)
-    {
-      tripMeters[i]++;
-    }
-    histogram.addNow();
+	if (revSensor.wasClicked() || revSensor.wasHeld())
+	{
+		for(int i = 0; i < NUM_TRIP_METERS; i++)
+		{
+			tripMeters[i]++;
+		}
+		histogram.addNow();
     
-    statusSender.startSending();
-  }
+		statusSender.startSending();
+	}
   
-  if (reportButton.wasClicked())
-  {
-    String msg;
-    for(int i = 0; i < NUM_TRIP_METERS; i++)
-    {
-      msg += String(tripMeterNames[i]) + String(" ")
-        + formatRevolutions(tripMeters[i]) + String(" ");
-    }
-    speakerSender.setMessage(msg);
-    speakerSender.startSending();
-  }
-  else if (reportButton.wasHeld())
-  {
-    histogram.print();
-  }
+	if (reportButton.wasClicked())
+	{
+		String msg;
+		for(int i = 0; i < NUM_TRIP_METERS; i++)
+		{
+			msg += String(tripMeterNames[i]) + String(" ")
+			+ formatRevolutions(tripMeters[i]) + String(" ");
+		}
+		speakerSender.setMessage(msg);
+		speakerSender.startSending();
+	}
+	else if (reportButton.wasHeld())
+	{
+		histogram.print();
+	}
 
 
-  for(int i = 0; i < NUM_TRIP_METERS; i++)
-  {
-    if (tripMeterButtons[i].wasClicked())
-    {
-      tripMeters[i] = 0;
-      speakerSender.setMessage(String(tripMeterNames[i]) + String(" ")
-        + String(PROSIGN_SK));
-      speakerSender.startSending();
-    }
-  }
+	for(int i = 0; i < NUM_TRIP_METERS; i++)
+	{
+		if (tripMeterButtons[i].wasClicked())
+		{
+			tripMeters[i] = 0;
+			speakerSender.setMessage(
+				String(tripMeterNames[i]) + String(" ")
+				+ String(PROSIGN_SK));
+			speakerSender.startSending();
+		}
+	}
 
-  if (tripMeterButtons[0].wasHeld())
-  {
-    speakerSender.setMessage(String("s"));
-    speakerSender.sendBlocking();
-    digitalWrite(PIN_STATUS, HIGH);
-    histogram.save();
-    digitalWrite(PIN_STATUS, LOW);
-  }
-  if (tripMeterButtons[1].wasHeld())
-  {
-    speakerSender.setMessage(String("x"));
-    speakerSender.sendBlocking();
-    histogram.clear();
-  }
-  
-  statusSender.continueSending();
-  speakerSender.continueSending();
+	if (tripMeterButtons[0].wasHeld())
+	{
+		speakerSender.setMessage(String("s"));
+		speakerSender.sendBlocking();
+		digitalWrite(PIN_STATUS, HIGH);
+		histogram.save();
+		digitalWrite(PIN_STATUS, LOW);
+	}
+	if (tripMeterButtons[1].wasHeld())
+	{
+		speakerSender.setMessage(String("x"));
+		speakerSender.sendBlocking();
+		histogram.clear();
+	}
+
+	statusSender.continueSending();
+	speakerSender.continueSending();
 }
 
 
@@ -156,18 +157,18 @@ void loop()
  */
 String formatRevolutions(unsigned int revolutions)
 {
-  float meters = METERS_PER_REVOLUTION*revolutions;
-  if(meters >= METERS_PER_KILOMETER)
-  {
-    meters /= METERS_PER_KILOMETER;
-    char buffer[10];
-    dtostrf(meters, 0, 1, buffer);
-    String value = String(buffer) + " km";
-    return value;
-  }
-  else
-  {
-    return String((int)round(meters), DEC) + String(" m");
-  }
+	float meters = METERS_PER_REVOLUTION*revolutions;
+	if(meters >= METERS_PER_KILOMETER)
+	{
+		meters /= METERS_PER_KILOMETER;
+		char buffer[10];
+		dtostrf(meters, 0, 1, buffer);
+		String value = String(buffer) + " km";
+		return value;
+	}
+	else
+	{
+		return String((int)round(meters), DEC) + String(" m");
+	}
 }
 
