@@ -29,24 +29,34 @@ void Histogram::addNow()
 void Histogram::print()
 {
 	Serial.begin(28800);
-	Serial.println("# Key: interval (ms)");
-	Serial.println("# Value: number of revolutions"
+	Serial.println("## Key: interval (ms)");
+	Serial.println("## Value: number of revolutions"
 		" taking this interval or greater");
 	char buffer[10];
 	dtostrf(METERS_PER_REVOLUTION, 0, sizeof(buffer)-3, buffer);
-	Serial.println(String("METERS_PER_REVOLUTION = ") + String(buffer));
-	Serial.println("(");
+	Serial.println(String("METERS_PER_REVOLUTION <- ") + String(buffer));
+
+	Serial.println("intervalData <- list(");
+
+	Serial.print("intervals=c(");
 	for(int i = 0; i < HISTOGRAM_SIZE; i++)
 	{
-		Serial.print("\t(");
+		if (i != 0) { Serial.print(", "); }
 		float logValue = i*HISTOGRAM_INC + HISTOGRAM_MIN;
 		float interval = exp(logValue);
 		Serial.print(interval);
-		Serial.print(",\t");
-		Serial.print(intervalHistogram[i]);
-		Serial.println("),");
 	}
-	Serial.println(") ");
+	Serial.println("),");
+
+	Serial.print("counts=c(");
+	for(int i = 0; i < HISTOGRAM_SIZE; i++)
+	{
+		if (i != 0) { Serial.print(", "); }
+		Serial.print(intervalHistogram[i]);
+	}
+	Serial.println(")");
+
+	Serial.println(")");
 	Serial.end();
 }
 
