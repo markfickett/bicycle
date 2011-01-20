@@ -20,7 +20,7 @@ void Histogram::addNow()
 	lastAddMillis = currentTime;
 
 	float logValue = log(elapsedTime);
-	logValue = constrain(elapsedTime, HISTOGRAM_MIN, HISTOGRAM_MAX);
+	logValue = constrain(logValue, HISTOGRAM_MIN, HISTOGRAM_MAX);
 	int index = (int)((logValue-HISTOGRAM_MIN)/HISTOGRAM_INC);
 
 	intervalHistogram[index] += 1;

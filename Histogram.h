@@ -33,8 +33,10 @@
 // 46	 101		4.61
 // 50	  93		4.54
 // 80	  58		4.07
-#define HISTOGRAM_MIN		4.05
-#define HISTOGRAM_MAX		10.00
+// MIN and MAX chosen also to produce an INC not subject to float errors.
+// MAX = MIN + (255.0/2**6 + 255.0/2**8)
+#define HISTOGRAM_MIN		4.25
+#define HISTOGRAM_MAX		9.23046875
 const int HISTOGRAM_SIZE = EEPROM_SIZE/2; // two bytes per value (int)
 const float HISTOGRAM_INC = (HISTOGRAM_MAX-HISTOGRAM_MIN)/(HISTOGRAM_SIZE-1);
 
