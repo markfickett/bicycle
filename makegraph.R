@@ -1,5 +1,6 @@
+## Plot a histogram from the bicycle revolution counter's data.
 ## To run this on the example file (generating Rplots.pdf), use:
-##	R -f makegraph.R exampleData.R
+##	R -f makeGraph.R exampleData.R "978 to Whole Foods"
 ## Get R: http://www.r-project.org/
 
 ## The x axis of the histogram will extend to include any intervals
@@ -10,11 +11,13 @@ THRESHOLD <- 4
 ##	METERS_PER_REVOLUTION
 ##	intervalData with $counts and $intervals
 args <- commandArgs()
-if (length(args) != 4) {
-	print(paste("usage: ", args[3], " <data R file>"))
+if (length(args) < 5) {
+	print(paste("usage: ", args[3], " <data R file> <title>"))
 	q()
 }
 source(args[4])
+## annotated with total distance later
+title <- paste(args[5:length(args)], collapse=" ")
 
 METERS_PER_KM <- 1000.0
 MILES_PER_KM <- 0.621371192
@@ -31,8 +34,9 @@ for(i in 1:length(intervalData$counts)) {
 	}
 }
 
-print(convertUnits(xmin))
-print(convertUnits(xmax))
+total <- sum(intervalData$counts)
+total <- total * METERS_PER_REVOLUTION * (1/METERS_PER_KM) * MILES_PER_KM
+title <- sprintf("%s: %.2f Miles", title, total)
 
-plot(convertUnits(intervalData$intervals), intervalData$counts, type='h', col="red", main="Biking to Whole Foods", xlab="Speed (mph)", ylab="Frequency", log="x", xlim=convertUnits(c(xmax, xmin)), yaxt="n", lwd=3, lend="square")
+plot(convertUnits(intervalData$intervals), intervalData$counts, type='h', col="red", main=title, xlab="Speed (mph)", ylab="Frequency", log="x", xlim=convertUnits(c(xmax, xmin)), yaxt="n", lwd=3, lend="square")
 
