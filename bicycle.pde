@@ -1,29 +1,5 @@
 /**
  * Collect information from a bicycle wheel revolution sensor and report it.
- *
- * Controls:
- *	tap PIN_BUTTON_REPORT: odometers' values output in Morse
- *	tap PIN_BUTTON_A: odometer A reset
- *	tap PIN_BUTTON_B: odometer B reset
- *	hold PIN_BUTTON_REPORT: histogram printed over serial
- *	hold PIN_BUTTON_A: histogram saved to EEPROM (always read on startup)
- *	hold PIN_BUTTON_B: histogram cleared
- *
- * Hardware:
- * This is written for an Arduino LilyPad (ATMega328) with the following
- * connections to the numbered digital pins. The bicycle sensor is paired
- * with a magnet on a spoke, and falls from infinite resistance to about
- * 2K Ohms when the magnet is nearby.
- *
- * The second leads of all the components are connected to ground.
- *
- * PIN_REV_SENSOR	wheel revolution sensor (COTS)
- * PIN_SPEAKER		speaker (telephone ringer)
- * PIN_BUTTON_REPORT	momentary push/rock button (from a VCR's board);
- *				easy to trigger
- * PIN_BUTTON_A		momentary push button (LilyPad);
- *				hard to accidentally trigger
- * PIN_BUTTON_B		''
  */
 
 
@@ -139,6 +115,8 @@ void loop()
 		digitalWrite(PIN_STATUS, HIGH);
 		histogram.save();
 		digitalWrite(PIN_STATUS, LOW);
+		speakerSender.setMessage(String("e"));
+		speakerSender.sendBlocking();
 	}
 	if (tripMeterButtons[1].wasHeld())
 	{

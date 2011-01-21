@@ -1,5 +1,0 @@
-The circuitry attached is:
-
-Bicycle computer's revolution detector; normally open (infinite resistance), drops to about 1K ohms when the magnet on the spoke is nearby.
-
-One side of the bicycle computer's sensor is connected to -, the other to digital pin 2. The only other connections are power supplies.
