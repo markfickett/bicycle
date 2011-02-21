@@ -81,14 +81,16 @@ void loop()
   
 	if (reportButton.wasClicked())
 	{
-		String msg;
-		for(int i = 0; i < NUM_TRIP_METERS; i++)
+		if (speakerSender.continueSending())
 		{
-			msg += String(tripMeterNames[i]) + String(" ")
-			+ formatRevolutions(tripMeters[i]) + String(" ");
+			// cancel sending in progress
+			speakerSender.setMessage(String());
 		}
-		speakerSender.setMessage(msg);
-		speakerSender.startSending();
+		else
+		{
+			speakerSender.setMessage(getTripMeterMessage());
+			speakerSender.startSending();
+		}
 	}
 	else if (reportButton.wasHeld())
 	{
@@ -127,6 +129,41 @@ void loop()
 
 	statusSender.continueSending();
 	speakerSender.continueSending();
+}
+
+
+/**
+ * Get a String describing the current trip meter values. This will either
+ * be values prefixed by trip meter names or, in the special case where
+ * all trip meters are the same, just that value. (All values will be converted
+ * from revolutions to distances with units.)
+ */
+String getTripMeterMessage()
+{
+	unsigned int v = tripMeters[0];
+	boolean different = false;
+	for(int i = 1; i < NUM_TRIP_METERS; ++i)
+	{
+		if (tripMeters[i] != v)
+		{
+			different = true;
+			break;
+		}
+	}
+	if (different)
+	{
+		String msg;
+		for(int i = 0; i < NUM_TRIP_METERS; ++i)
+		{
+			msg += String(tripMeterNames[i]) + String(" ")
+			+ formatRevolutions(tripMeters[i]) + String(" ");
+		}
+		return msg;
+	}
+	else
+	{
+		return formatRevolutions(v);
+	}
 }
 
 
