@@ -1,6 +1,10 @@
 #pragma once
 
-#include "WProgram.h"
+#if defined(ARDUINO) && ARDUINO >= 100
+  #include "Arduino.h"
+#else
+  #include "WProgram.h"
+#endif
 
 // Any button press >= HOLD_THRESHOLD milliseconds is considered a hold,
 //	not a click.
